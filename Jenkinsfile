@@ -6,23 +6,30 @@ pipeline {
     }
 
     stages {
-        stage("Test") {
+        stage('Checkout') {
             steps {
-                echo "Running tests..."
-                sh "mvn test"
+                echo 'Checking out source code...'
+                checkout scm
             }
         }
 
-        stage("Build") {
+        stage('Test') {
             steps {
-                echo "Building project..."
-                sh "mvn package"
+                echo 'Running tests...'
+                sh 'mvn test'
             }
         }
 
-        stage("Deploy on Test Server") {
+        stage('Build') {
             steps {
-                echo "Deploying to Test Server..."
+                echo 'Building project...'
+                sh 'mvn package'
+            }
+        }
+
+        stage('Deploy on Test Server') {
+            steps {
+                echo 'Deploying to Test Server...'
                 deploy adapters: [
                     tomcat9(
                         alternativeDeploymentContext: '',
@@ -36,9 +43,9 @@ pipeline {
             }
         }
 
-        stage("Deploy on Prod Server") {
+        stage('Deploy on Prod Server') {
             steps {
-                echo "Deploying to Production Server..."
+                echo 'Deploying to Production Server...'
                 deploy adapters: [
                     tomcat9(
                         alternativeDeploymentContext: '',
@@ -55,13 +62,13 @@ pipeline {
 
     post {
         always {
-            echo "========always========"
+            echo '======== always ========'
         }
         success {
-            echo "========pipeline executed successfully========"
+            echo '======== pipeline executed successfully ========'
         }
         failure {
-            echo "========pipeline execution failed========"
+            echo '======== pipeline execution failed ========'
         }
     }
 }
